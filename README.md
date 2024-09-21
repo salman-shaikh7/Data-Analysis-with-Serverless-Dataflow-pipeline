@@ -35,6 +35,9 @@ gcloud config get-value project
 gcloud config set project myprojectid7028
 ```
 
+<br>
+<br>
+
 ## TASK 2 :  Enabling Dataflow API.
 
 Code
@@ -43,7 +46,8 @@ Code
 gcloud services disable dataflow.googleapis.com --force
 gcloud services enable dataflow.googleapis.com
 ```
-
+<br>
+<br>
 
 ## TASK 3 :  Preparation
 
@@ -61,32 +65,86 @@ gcloud storage buckets create gs://myprojectid7028 --location=us-east1 --no-publ
 BUCKET="myprojectid7028"
 echo $BUCKET
 ```
+<br>
+<br>
 
-
-## TASK 4 : Pipeline filtering 
+## TASK 4 : Creating a pipeline filtering 
 
 * About Dataset : We will be using **javahelp** dataset from google cloud training repo [Link](https://github.com/GoogleCloudPlatform/training-data-analyst)
 
-This dataset contain different java files 
+   This dataset contain different java files 
 
 
-## STEP 1: Install required libraries
+### STEP 1: Download the files from github and keep it in a folder
+
+File can found here : [Link](https://github.com/salman-shaikh7/Data-Analysis-with-Serverless-Dataflow-pipeline/tree/main/javahelp)
+
+### STEP 2: Build pipeline code for local machine.
+
+Python Code 
+
+```python
+import apache_beam as beam
+import sys
+
+def my_grep(line, term):
+   if line.startswith(term):
+      yield line
+
+if __name__ == '__main__':
+   p = beam.Pipeline(argv=sys.argv)
+   input = 'javahelp\*.java'
+   output_prefix = 'tmp\output'
+   searchTerm = 'import'
+
+   # find all lines that contain the searchTerm
+   (p
+      | 'GetJava' >> beam.io.ReadFromText(input)
+      | 'Grep' >> beam.FlatMap(lambda line: my_grep(line, searchTerm) )
+      | 'write' >> beam.io.WriteToText(output_prefix)
+   )
+
+   p.run().wait_until_finish()
+```
+
+This Apache Beam pipeline reads lines from multiple .java files, filters the lines that start with the word "import," and writes the filtered lines to an output file. 
+
+The pipeline consists of three main steps:
+
+*   ReadFromText: Reads all lines from the .java files.
+*   FlatMap: Filters lines that start with "import."
+*   WriteToText: Writes the filtered lines to a specified output location.
 
 
+## TASK 5: Execute the pipeline locally
+
+
+### STEP 1 : Create & activate a virtual enviornment 
+
+```powershell
+python -m venv myvirtualenv
+```
+
+```powershell
+activate.ps1
+```
+
+### STEP 2 : Install required depedencies in virtual env
 
 ```python
 pip install apache-beam[gcp]
 ```
 
-## STEP 2: Download the files from github and keep it in a folder
+### STEP 3 : Run pipeline
 
-File can found here : [Link](https://github.com/salman-shaikh7/Data-Analysis-with-Serverless-Dataflow-pipeline/tree/main/javahelp)
+```powershell
+python local_pipeline.py
+```
 
-## STEP 3: 
+After executing this pipeline we can see that we have file *tmp\output-00000-of-00001* contains required output.
 
-Python Code 
+<br>
+<br>
 
-
-
-
+## TASK 6: Execute the pipeline in gcp cloud
 

@@ -55,14 +55,14 @@ For this project we will use cloud shell machine as local machine.
 
 ### STEP 1 : Create a bucket 
 
-```bash
+```powershell
 gcloud storage buckets create gs://myprojectid7028 --location=us-east1 --no-public-access-prevention
 ```
 
 ### STEP 2 : Setting up Bucket name 
 
-```bash
-BUCKET="myprojectid7028"
+```powershell
+$BUCKET="myprojectid7028"
 echo $BUCKET
 ```
 <br>
@@ -115,6 +115,8 @@ The pipeline consists of three main steps:
 *   FlatMap: Filters lines that start with "import."
 *   WriteToText: Writes the filtered lines to a specified output location.
 
+<br>
+<br>
 
 ## TASK 5: Execute the pipeline locally
 
@@ -146,5 +148,70 @@ After executing this pipeline we can see that we have file *tmp\output-00000-of-
 <br>
 <br>
 
-## TASK 6: Execute the pipeline in gcp cloud
+## TASK 6: Execute the pipeline in gcp cloud.
 
+### STEP 1 : Copy Local files to Cloud Storage bucket
+
+```powershell
+
+gcloud storage cp javahelp\*.java gs://$BUCKET/javahelp
+
+```
+
+### STEP 2 : Write new pipline with New variables
+
+We are adding project id, region and bucket location path 
+
+```python
+
+import apache_beam as beam
+
+def my_grep(line, term):
+   if line.startswith(term):
+      yield line
+
+PROJECT='myprojectid7028'
+BUCKET='myprojectid7028'
+REGION='us-east1'
+
+def run():
+   argv = [
+      '--project={0}'.format(PROJECT),
+      '--job_name=examplejob2',
+      '--save_main_session',
+      '--staging_location=gs://{0}/staging/'.format(BUCKET),
+      '--temp_location=gs://{0}/staging/'.format(BUCKET),
+      '--region={0}'.format(REGION),
+      '--worker_machine_type=e2-standard-2',
+      '--runner=DataflowRunner'
+   ]
+
+   p = beam.Pipeline(argv=argv)
+   input = 'gs://{0}/javahelp/*.java'.format(BUCKET)
+   output_prefix = 'gs://{0}/javahelp/output'.format(BUCKET)
+   searchTerm = 'import'
+
+   # find all lines that contain the searchTerm
+   (p
+      | 'GetJava' >> beam.io.ReadFromText(input)
+      | 'Grep' >> beam.FlatMap(lambda line: my_grep(line, searchTerm) )
+      | 'write' >> beam.io.WriteToText(output_prefix)
+   )
+
+   p.run()
+
+if __name__ == '__main__':
+   run()
+
+```
+### STEP 3 : Run
+
+```powershell
+python cloud_pipeline.py
+```
+
+## STEP 4 : Check Job created or not
+
+![alt text](Screenshots/image.png)
+
+![alt text](Screenshots/image-1.png)

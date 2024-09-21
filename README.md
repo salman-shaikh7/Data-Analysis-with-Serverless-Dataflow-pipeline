@@ -49,19 +49,13 @@ gcloud services enable dataflow.googleapis.com
 
 For this project we will use cloud shell machine as local machine.
 
-### STEP 1 : Clone git repo
-
-```bash
-git clone https://github.com/GoogleCloudPlatform/training-data-analyst
-```
-
-### STEP 2 : Create a bucket 
+### STEP 1 : Create a bucket 
 
 ```bash
 gcloud storage buckets create gs://myprojectid7028 --location=us-east1 --no-public-access-prevention
 ```
 
-### STEP 3 : Setting up Bucket name 
+### STEP 2 : Setting up Bucket name 
 
 ```bash
 BUCKET="myprojectid7028"

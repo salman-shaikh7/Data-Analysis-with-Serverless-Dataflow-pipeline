@@ -65,9 +65,7 @@ echo $BUCKET
 
 ## TASK 4 : Pipeline filtering 
 
-* About Dataset : We will be using **javahelp** dataset from google cloud training repo
-
-Link : https://github.com/GoogleCloudPlatform/training-data-analyst
+* About Dataset : We will be using **javahelp** dataset from google cloud training repo [Link](https://github.com/GoogleCloudPlatform/training-data-analyst)
 
 This dataset contain different java files 
 
@@ -82,7 +80,7 @@ pip install apache-beam[gcp]
 
 ## STEP 2: Download the files from github and keep it in a folder
 
-
+File can found here : [Link](https://github.com/salman-shaikh7/Data-Analysis-with-Serverless-Dataflow-pipeline/tree/main/javahelp)
 
 ## STEP 3: 
 

@@ -65,9 +65,29 @@ echo $BUCKET
 
 ## TASK 4 : Pipeline filtering 
 
+* About Dataset : We will be using **javahelp** dataset from google cloud training repo
+
+Link : https://github.com/GoogleCloudPlatform/training-data-analyst
+
+This dataset contain different java files 
+
+
+## STEP 1: Install required libraries
+
+
+
 ```python
-pip install apache-beam
+pip install apache-beam[gcp]
 ```
+
+## STEP 2: Download the files from github and keep it in a folder
+
+
+
+## STEP 3: 
+
+Python Code 
+
 
 
 
